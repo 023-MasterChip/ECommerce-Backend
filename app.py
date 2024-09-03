@@ -39,6 +39,14 @@ def main():
                 owner INTEGER NOT NULL
             )
         ''')
+    
+    c.execute('''
+            CREATE TABLE IF NOT EXISTS carts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cust_id TEXT NOT NULL,
+                items TEXT NOT NULL
+            )
+        ''')
 
     conn.commit()
     conn.close()
@@ -144,7 +152,23 @@ def item(item_id):
         conn.close()
         return jsonify({"status": "success", "message": "data retrieved sucessfully", "data" : items})
 
+@app.route('/cust/<int:cust_id>/cart/<int:cart_id>', methods = ['GET'])
+def view_cart(cust_id, cart_id):
+    pass
 
+@app.route('/cust/item/cart/<int:cart_id>', methods=['GET', 'POST'])
+def add_to_cart(item_id,cart_id):
+    conn = get_db_connection()
+    c=conn.cursor()
+    if request.method == 'POST':
+        data = request.body
+        cust_id = data['cust_id']
+        item_id = data['item_id']
+        items = data['items']
+        c.execute("INSERT INTO cart (customer_id, item_id, cart_id) VALUES (?,?,?)",(cust_id,item_id,cart_id,items))
+
+        conn.close()
+        return "item added successfully"
 
 if __name__ == '__main__':
     app.run(debug=True)
