@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import datetime
 import sqlite3
 
 app = Flask(__name__)
+CORS(app)
 
 db = 'EComm.db'
 
@@ -170,5 +172,11 @@ def add_to_cart(item_id,cart_id):
         conn.close()
         return "item added successfully"
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'POST':
+        data = request.get_json()
+        return data
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000)
